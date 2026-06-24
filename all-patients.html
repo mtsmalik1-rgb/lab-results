@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل المرضى - مختبر مركز الحياة</title>
+    <style>
+        :root {
+            --primary-color: #0284c7;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .archive-container {
+            background: var(--card-bg);
+            max-width: 900px;
+            width: 100%;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 24px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            margin-top: 20px;
+        }
+        th {
+            background-color: #f8fafc;
+            color: #64748b;
+            padding: 14px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .ward-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        .btn-view { background: #e0f2fe; color: #0369a1; }
+        .btn-delete { background: #fee2e2; color: #ef4444; }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+        .back-btn {
+            margin-top: 20px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="archive-container">
+        <h1>🗂️ سجل ومطبوعات كل المرضى المدخلين</h1>
+        
+        <table id="patientsTable">
+            <thead>
+                <tr>
+                    <th>تاريخ الإدخال</th>
+                    <th>اسم المريض</th>
+                    <th>الردهة</th>
+                    <th>عدد التحاليل المدخلة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="archiveBody">
+                </tbody>
+        </table>
+        
+        <div id="emptyView" class="no-data" style="display:none;">
+            📬 لا يوجد أي مرضى مسجلين حالياً في النظام.
+        </div>
+    </div>
+
+    <a href="index.html" class="back-btn">← العودة لصفحة إدخال مريض جديد</a>
+
+    <script>
+        function loadArchive() {
+            const allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+            const tbody = document.getElementById('archiveBody');
+            const table = document.getElementById('patientsTable');
+            const emptyView = document.getElementById('emptyView');
+
+            tbody.innerHTML = "";
+
+            if (allPatients.length === 0) {
+                table.style.display = "none";
+                emptyView.style.display = "block";
+                return;
+            }
+
+            table.style.display = "table";
+            emptyView.style.display = "none";
+
+            // عرض المرضى من الأحدث إلى الأقدم
+            allPatients.reverse().forEach(patient => {
+                const totalTests = Object.keys(patient.tests).length;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${patient.date}</td>
+                        <td><strong>${patient.name}</strong></td>
+                        <td><span class="ward-badge">${patient.ward}</span></td>
+                        <td>${totalTests} تحاليل</td>
+                        <td>
+                            <button class="btn-action btn-view" onclick="viewPatient(${patient.id})">📄 عرض وطباعة</button>
+                            <button class="btn-action btn-delete" onclick="deletePatient(${patient.id})">🗑️ حذف</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function viewPatient(id) {
+            const allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+            const patient = allPatients.find(p => p.id === id);
+            if (patient) {
+                localStorage.setItem('luxuryPatientReport', JSON.stringify(patient));
+                window.location.href = 'results.html';
+            }
+        }
+
+        function deletePatient(id) {
+            if (confirm("هل أنت متأكد من حذف هذا المريض نهائياً من السجل؟")) {
+                let allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+                allPatients = allPatients.filter(p => p.id !== id);
+                localStorage.setItem('allPatientsList', JSON.stringify(allPatients));
+                loadArchive();
+            }
+        }
+
+        window.onload = loadArchive;
+    </script>
+</body>
+</html>
