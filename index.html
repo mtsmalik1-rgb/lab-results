@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر مركز الحياة - إدخال تحاليل المرضى</title>
+    <style>
+        :root {
+            --primary-color: #0284c7;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .form-container {
+            background: var(--card-bg);
+            max-width: 700px;
+            width: 100%;
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 26px;
+            margin: 0 0 8px 0;
+        }
+        .header p {
+            color: #64748b;
+            margin: 0;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+            background-color: #f1f5f9;
+            transition: 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+        }
+        .tests-section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #475569;
+            margin: 25px 0 15px 0;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        .tests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .test-input-box {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .test-input-box label {
+            text-align: center;
+            color: #0284c7;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .test-input-box input {
+            text-align: center;
+            padding: 8px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+        .btn-submit:hover { background-color: #0369a1; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="header">
+            <h1>مختبر مركز الحياة لغسيل الكلى</h1>
+            <p>إدخال نتائج تحاليل المرضى الفورية 🧪</p>
+        </div>
+
+        <form id="patientForm">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>اسم المريض الكامل</label>
+                    <input type="text" id="pName" placeholder="محمد علي حسن" required>
+                </div>
+                <div class="form-group">
+                    <label>الردهة</label>
+                    <select id="pWard" required>
+                        <option value="">اختر الردهة...</option>
+                        <option value="ردهة HIV">ردهة HIV</option>
+                        <option value="ردهة HCV">ردهة HCV</option>
+                        <option value="ردهة HBS">ردهة HBS</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tests-section-title">التحاليل الطبية (أدخل النتائج المطلوبة فقط واترك الباقي فارغاً)</div>
+
+            <div class="tests-grid" id="testsGrid">
+                </div>
+
+            <button type="submit" class="btn-submit">حفظ وتوليد التقرير الفاخر</button>
+        </form>
+    </div>
+
+    <script>
+        // قائمة التحاليل المطلوبة بالتسلسل الدقيق
+        const testList = ["ALT", "Alb", "Alp", "AST", "TSB", "PO4", "Glu", "CA", "UREA", "CREA", "TP", "Iron", "S.Fer", "PTH", "Vit.D3", "NA", "K", "Ca"];
+        const grid = document.getElementById('testsGrid');
+
+        // توليد الحقول ديناميكياً لتجنب التكرار في الـ HTML
+        testList.forEach(test => {
+            grid.innerHTML += `
+                <div class="test-input-box">
+                    <label>${test}</label>
+                    <input type="text" id="test_${test}" placeholder="-">
+                </div>
+            `;
+        });
+
+        document.getElementById('patientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // جمع نتائج التحاليل غير الفارغة فقط
+            let results = {};
+            testList.forEach(test => {
+                let val = document.getElementById(`test_${test}`).value.trim();
+                if(val !== "") {
+                    results[test] = val;
+                }
+            });
+
+            const patientRecord = {
+                name: document.getElementById('pName').value,
+                ward: document.getElementById('pWard').value,
+                date: new Date().toLocaleDateString('ar-EG'),
+                tests: results
+            };
+
+            localStorage.setItem('luxuryPatientReport', JSON.stringify(patientRecord));
+            window.location.href = 'results.html';
+        });
+    </script>
+</body>
+</html>
