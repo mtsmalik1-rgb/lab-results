@@ -262,3 +262,83 @@
 
 <div class="buttons-container">
     <button class="btn-action btn-print-blue" onclick="window.print()">🖨️ طباعة التقرير</button>
+    <button class="btn-action btn-whatsapp-green" onclick="sendWhatsApp()">🟢 إرسال عبر الواتساب</button>
+    <a href="index.html" class="btn-action btn-back-gray">← مريض جديد</a>
+</div>
+
+<script>
+    // جلب البيانات مع حماية في حال كانت فارغة لمنع الشاشة البيضاء
+    let patient = null;
+    try {
+        patient = JSON.parse(localStorage.getItem('luxuryPatientReport'));
+    } catch(e) {
+        console.error("Error parsing patient data", e);
+    }
+
+    // إذا لم تكن هناك بيانات، نعرض بيانات نموذجية تجريبية للتأكد من عمل التصميم
+    if (!patient) {
+        patient = {
+            name: "مريض تجريبي (اضف مريض جديد أولاً)",
+            date: new Date().toLocaleDateString('ar-EG'),
+            ward: "ردهة تجريبية",
+            phone: "07700000000",
+            tests: { "UREA": "45 mg/dL", "CREA": "1.2 mg/dL", "K": "4.2 mEq/L" }
+        };
+    }
+
+    document.getElementById('outName').innerText = patient.name || "-";
+    document.getElementById('outDate').innerText = patient.date || "-";
+    document.getElementById('outWard').innerText = patient.ward || "-";
+    document.getElementById('outPhone').innerText = patient.phone || "غير محدد";
+
+    const tbody = document.getElementById('resultsTableBody');
+    tbody.innerHTML = ''; 
+    
+    if (patient.tests && Object.keys(patient.tests).length > 0) {
+        for (const [testName, testValue] of Object.entries(patient.tests)) {
+            tbody.innerHTML += `
+                <tr>
+                    <td class="test-name-cell">${testName}</td>
+                    <td class="test-value-cell">${testValue}</td>
+                </tr>
+            `;
+        }
+    } else {
+        tbody.innerHTML = `<tr><td colspan="2" style="color: #64748b; padding: 20px;">لم يتم إدخال تحاليل لهذا المريض.</td></tr>`;
+    }
+
+    function sendWhatsApp() {
+        if (!patient || !patient.phone || patient.phone === "07700000000") {
+            alert("لا يوجد رقم هاتف مسجل أو أنك تستعرض المريض التجريبي!");
+            return;
+        }
+
+        let messageText = `🏥 *مختبر مركز الحياة لغسيل الكلى* 🏥\n\n`;
+        messageText += `👤 *المريض:* ${patient.name}\n`;
+        messageText += `📅 *التاريخ:* ${patient.date}\n`;
+        messageText += `🚪 *الردهة:* ${patient.ward}\n`;
+        messageText += `------------------------------------\n`;
+        messageText += `🧪 *نتائج التحاليل الطبية:* \n\n`;
+
+        if (patient.tests && Object.keys(patient.tests).length > 0) {
+            for (const [testName, testValue] of Object.entries(patient.tests)) {
+                messageText += `🔹 *${testName}:* ${testValue}\n`;
+            }
+        }
+
+        messageText += `------------------------------------\n`;
+        messageText += `✨ *تمنياتنا لكم بالصحة والشفاء العاجل* ✨`;
+
+        const encodedText = encodeURIComponent(messageText);
+        let phoneNumber = patient.phone.trim();
+        if (phoneNumber.startsWith('0')) {
+            phoneNumber = '964' + phoneNumber.substring(1);
+        }
+
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedText}`;
+        window.open(whatsappUrl, '_blank');
+    }
+</script>
+
+</body>
+</html>
