@@ -6,266 +6,308 @@
     <title>مختبر مركز الحياة - نتيجة التحليل</title>
     <style>
         :root {
-            --primary: #0f172a;
-            --accent: #0284c7;
-            --accent-light: #e0f2fe;
+            --bg-main: #f4f6f9;
+            --surface: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --brand: #0284c7;
+            --brand-light: #f0f9ff;
             --success: #22c55e;
-            --text-main: #334155;
-            --bg-global: #f1f5f9;
+            --border: #e2e8f0;
         }
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-global);
+            background-color: var(--bg-main);
+            color: var(--text-dark);
             margin: 0;
-            padding: 50px 20px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: var(--text-main);
         }
 
-        .report-card {
-            background: #ffffff;
-            max-width: 700px;
+        /* حاوية التقرير العصرية */
+        .report-wrapper {
+            background: var(--surface);
+            max-width: 750px;
             width: 100%;
-            padding: 45px;
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
             position: relative;
-        }
-
-        /* شريط جمالي علوي */
-        .report-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 8px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-        }
-
-        .report-header {
-            text-align: center;
-            margin-bottom: 35px;
-            padding-bottom: 20px;
-            border-bottom: 2px dashed #cbd5e1;
-        }
-
-        .report-header h1 {
-            color: var(--primary);
-            margin: 0 0 8px 0;
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .report-header p {
-            color: var(--accent);
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .patient-info-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 20px 25px;
-            margin-bottom: 35px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            font-size: 15px;
-        }
-
-        .info-item .label {
-            color: #64748b;
-            font-weight: 500;
-            margin-left: 8px;
-        }
-
-        .info-item .value {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .table-container {
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 35px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: right;
+        /* خلفية جمالية خفيفة تعطي طابع طبي للمختبر */
+        .report-wrapper::after {
+            content: "🧪";
+            position: absolute;
+            font-size: 300px;
+            opacity: 0.02;
+            bottom: -50px;
+            left: -50px;
+            pointer-events: none;
         }
 
-        th {
-            background-color: var(--primary);
-            color: #ffffff;
-            padding: 16px;
-            font-size: 15px;
-            font-weight: 600;
+        /* الهيدر الحديث */
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed var(--border);
+            padding-bottom: 25px;
+            margin-bottom: 30px;
+        }
+
+        .brand-title h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--brand);
+        }
+
+        .brand-title p {
+            margin: 5px 0 0 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .report-badge {
+            background: var(--brand-light);
+            color: var(--brand);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
             letter-spacing: 0.5px;
         }
 
-        td {
+        /* تصميم الكروت المنفصلة لبيانات المريض */
+        .patient-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+
+        .info-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 16px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 15px;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-
-        .test-name {
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .test-result {
-            font-weight: 700;
-            color: var(--primary);
-            background: var(--accent-light);
-            padding: 4px 12px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .signatures {
             display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #edf2f7;
-            color: #64748b;
-            font-size: 14px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-card .card-label {
+            font-size: 12px;
+            color: var(--text-muted);
             font-weight: 600;
         }
 
-        .actions-area {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 35px;
-            width: 100%;
-            max-width: 700px;
+        .info-card .card-value {
+            font-size: 16px;
+            color: var(--text-dark);
+            font-weight: 700;
         }
 
-        .btn {
-            padding: 14px 28px;
+        /* إعادة ابتكار جدول النتائج لتكون على شكل بطاقات مبوبة */
+        .results-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .test-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .test-row:hover {
+            border-color: var(--brand);
+            transform: translateX(-4px);
+        }
+
+        .test-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .test-code {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .test-dept {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .test-final-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--brand);
+            background: var(--brand-light);
+            padding: 6px 16px;
+            border-radius: 10px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* التوقيعات */
+        .footer-signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sig-box {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .sig-line {
+            margin-top: 35px;
+            width: 150px;
+            border-top: 1px dashed var(--text-muted);
+        }
+
+        /* قسم الأزرار */
+        .actions-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 30px;
+            width: 100%;
+            max-width: 750px;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 14px;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        .btn:hover {
+        .action-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px -6px rgba(0,0,0,0.15);
         }
 
-        .btn-print {
-            background-color: var(--primary);
+        .btn-primary-action {
+            background-color: var(--brand);
             color: white;
         }
 
-        .btn-whatsapp {
+        .btn-success-action {
             background-color: var(--success);
             color: white;
         }
 
-        .btn-back {
-            background-color: #ffffff;
-            color: #475569;
-            border: 1px solid #cbd5e1;
+        .btn-outline-action {
+            background-color: var(--surface);
+            color: var(--text-dark);
+            border: 1px solid var(--border);
             text-decoration: none;
         }
 
+        /* تحسينات الطباعة لتبدو كالحقيقة */
         @media print {
             body { padding: 0; background: white; }
-            .report-card { box-shadow: none; border: none; padding: 0; max-width: 100%; }
-            .report-card::before { display: none; }
-            .actions-area { display: none; }
-            .test-result { background: none; padding: 0; }
+            .report-wrapper { box-shadow: none; border: none; padding: 0; }
+            .report-wrapper::after { display: none; }
+            .test-row { background: none; border-radius: 0; border: none; border-bottom: 1px solid #cbd5e1; padding: 10px 0; }
+            .test-final-value { background: none; padding: 0; }
+            .actions-container { display: none; }
         }
     </style>
 </head>
 <body>
 
-<div class="report-card">
+<div class="report-wrapper">
     <div class="report-header">
-        <h1>مختبر مركز الحياة لغسيل الكلى</h1>
-        <p>BIOCHEMISTRY REPORT • تقرير التحاليل الطبية</p>
+        <div class="brand-title">
+            <h1>مختبر مركز الحياة</h1>
+            <p>لغسيل الكلى والتحاليل الطبية الفورية</p>
+        </div>
+        <div class="report-badge">LABORATORY REPORT</div>
     </div>
 
-    <div class="patient-info-box">
-        <div class="info-item">
-            <span class="label">اسم المريض:</span>
-            <span class="value" id="outName">-</span>
+    <div class="patient-grid">
+        <div class="info-card">
+            <span class="card-label">اسم المريض</span>
+            <span class="card-value" id="outName">-</span>
         </div>
-        <div class="info-item">
-            <span class="label">التاريخ:</span>
-            <span class="value" id="outDate">-</span>
+        <div class="info-card">
+            <span class="card-label">تاريخ الفحص</span>
+            <span class="card-value" id="outDate">-</span>
         </div>
-        <div class="info-item">
-            <span class="label">الردهة:</span>
-            <span class="value" id="outWard">-</span>
+        <div class="info-card">
+            <span class="card-label">الردهة المتواجد بها</span>
+            <span class="card-value" id="outWard">-</span>
         </div>
-        <div class="info-item">
-            <span class="label">رقم الهاتف:</span>
-            <span class="value" id="outPhone">-</span>
+        <div class="info-card">
+            <span class="card-label">رقم التواصل</span>
+            <span class="card-value" id="outPhone">-</span>
         </div>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>اسم الفحص المخبري (Test Name)</th>
-                    <th>النتيجة (Result)</th>
-                </tr>
-            </thead>
-            <tbody id="resultsTableBody">
-            </tbody>
-        </table>
+    <div class="results-section-title">🧪 نتائج الفحوصات الحالية:</div>
+    
+    <div class="results-list" id="resultsContainer">
     </div>
 
-    <div class="signatures">
-        <div>الفاحص المخبري المختص</div>
-        <div>طبيب المختبر المسؤول</div>
+    <div class="footer-signatures">
+        <div class="sig-box">
+            <span>توقيع الفاحص المخبري</span>
+            <div class="sig-line"></div>
+        </div>
+        <div class="sig-box">
+            <span>طبيب المختبر المسؤول</span>
+            <div class="sig-line"></div>
+        </div>
     </div>
 </div>
 
-<div class="actions-area">
-    <button class="btn btn-print" onclick="window.print()">🖨️ طباعة التقرير الفاخر</button>
-    <button class="btn btn-whatsapp" onclick="sendWhatsApp()">🟢 إرسال عبر الواتساب</button>
-    <a href="index.html" class="btn btn-back">← إدخال مريض جديد</a>
+<div class="actions-container">
+    <button class="action-button btn-primary-action" onclick="window.print()">🖨️ طباعة التقرير</button>
+    <button class="action-button btn-success-action" onclick="sendWhatsApp()">🟢 إرسال واتساب</button>
+    <a href="index.html" class="action-button btn-outline-action">← مريض جديد</a>
 </div>
 
 <script>
@@ -277,18 +319,21 @@
         document.getElementById('outWard').innerText = patient.ward;
         document.getElementById('outPhone').innerText = patient.phone || "غير محدد";
 
-        const tbody = document.getElementById('resultsTableBody');
+        const container = document.getElementById('resultsContainer');
         if (patient.tests && Object.keys(patient.tests).length > 0) {
             for (const [testName, testValue] of Object.entries(patient.tests)) {
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="test-name">${testName}</td>
-                        <td><span class="test-result">${testValue}</span></td>
-                    </tr>
+                container.innerHTML += `
+                    <div class="test-row">
+                        <div class="test-meta">
+                            <span class="test-code">${testName}</span>
+                            <span class="test-dept">Biochemistry Analysis</span>
+                        </div>
+                        <span class="test-final-value">${testValue}</span>
+                    </div>
                 `;
             }
         } else {
-            tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#94a3b8;">لم يتم إدخال أي نتائج تحاليل.</td></tr>`;
+            container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">لا توجد تحاليل مدخلة.</div>`;
         }
     } else {
         alert("خطأ: لم يتم العثور على بيانات المريض!");
@@ -296,7 +341,7 @@
 
     function sendWhatsApp() {
         if (!patient || !patient.phone) {
-            alert("لا يوجد رقم هاتف مسجل لهذا المريض لإرسال النتيجة إليه!");
+            alert("لا يوجد رقم هاتف مسجل لهذا المريض!");
             return;
         }
 
@@ -311,18 +356,21 @@
             for (const [testName, testValue] of Object.entries(patient.tests)) {
                 messageText += `🔹 *${testName}:* ${testValue}\n`;
             }
-        } else {
-            messageText += `لا توجد تحاليل مسجلة.\n`;
         }
 
         messageText += `------------------------------------\n`;
         messageText += `✨ *تمنياتنا لكم بالصحة والشفاء العاجل* ✨`;
 
         const encodedText = encodeURIComponent(messageText);
-
         let phoneNumber = patient.phone.trim();
         if (phoneNumber.startsWith('0')) {
             phoneNumber = '964' + phoneNumber.substring(1);
         }
 
-        const whatsappUrl = `https://api.whatsapp
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedText}`;
+        window.open(whatsappUrl, '_blank');
+    }
+</script>
+
+</body>
+</html>
