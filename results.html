@@ -267,22 +267,22 @@
 </div>
 
 <script>
-    // جلب البيانات مع حماية في حال كانت فارغة لمنع الشاشة البيضاء
+    // جلب البيانات مع وضع نظام حماية آمن لمنع الشاشة البيضاء تماماً
     let patient = null;
     try {
         patient = JSON.parse(localStorage.getItem('luxuryPatientReport'));
     } catch(e) {
-        console.error("Error parsing patient data", e);
+        console.error(e);
     }
 
-    // إذا لم تكن هناك بيانات، نعرض بيانات نموذجية تجريبية للتأكد من عمل التصميم
+    // إذا تم فتح الرابط مباشرة والبيانات فارغة، يتم عرض قالب تجريبي منظم
     if (!patient) {
         patient = {
-            name: "مريض تجريبي (اضف مريض جديد أولاً)",
+            name: "مريض تجريبي (يرجى إدخال مريض جديد)",
             date: new Date().toLocaleDateString('ar-EG'),
-            ward: "ردهة تجريبية",
+            ward: "ردهة افتراضية",
             phone: "07700000000",
-            tests: { "UREA": "45 mg/dL", "CREA": "1.2 mg/dL", "K": "4.2 mEq/L" }
+            tests: { "UREA": "45 mg/dL", "CREA": "1.2 mg/dL", "K": "4.1 mEq/L" }
         };
     }
 
@@ -304,12 +304,12 @@
             `;
         }
     } else {
-        tbody.innerHTML = `<tr><td colspan="2" style="color: #64748b; padding: 20px;">لم يتم إدخال تحاليل لهذا المريض.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="2" style="color: #64748b; padding: 20px;">لم يتم تسجيل تحاليل.</td></tr>`;
     }
 
     function sendWhatsApp() {
         if (!patient || !patient.phone || patient.phone === "07700000000") {
-            alert("لا يوجد رقم هاتف مسجل أو أنك تستعرض المريض التجريبي!");
+            alert("لا يوجد رقم هاتف مسجل لإرسال التقرير!");
             return;
         }
 
