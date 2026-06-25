@@ -87,7 +87,6 @@
             background-color: #64748b;
             color: white;
         }
-        /* تصميم زر الواتساب الأخضر */
         .btn-whatsapp {
             background-color: #25D366;
             color: white;
@@ -134,27 +133,23 @@
             </tr>
         </thead>
         <tbody id="resultsTableBody">
-            </tbody>
+        </tbody>
     </table>
 
     <div class="actions-area">
         <button class="btn btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
-        
         <button class="btn btn-whatsapp" onclick="sendWhatsApp()">🟢 إرسال عبر الواتساب</button>
-        
         <a href="index.html" class="btn btn-back">➕ مريض جديد</a>
     </div>
 </div>
 
 <script>
-    // جلب بيانات المريض الحالي من الـ localStorage
     const patient = JSON.parse(localStorage.getItem('luxuryPatientReport'));
 
     if (patient) {
         document.getElementById('outName').innerText = patient.name;
         document.getElementById('outDate').innerText = patient.date;
         document.getElementById('outWard').innerText = patient.ward;
-        // عرض الرقم أو كلمة غير محدد إذا لم يكن موجوداً
         document.getElementById('outPhone').innerText = patient.phone || "غير محدد";
 
         const tbody = document.getElementById('resultsTableBody');
@@ -174,14 +169,12 @@
         alert("خطأ: لم يتم العثور على بيانات المريض!");
     }
 
-    // 🟢 دالة إرسال النتيجة المجانية عبر الواتساب
     function sendWhatsApp() {
         if (!patient || !patient.phone) {
             alert("لا يوجد رقم هاتف مسجل لهذا المريض لإرسال النتيجة إليه!");
             return;
         }
 
-        // 1. تجهيز نص الرسالة المرتبة
         let messageText = `🏥 *مختبر مركز الحياة لغسيل الكلى* 🏥\n\n`;
         messageText += `👤 *المريض:* ${patient.name}\n`;
         messageText += `📅 *التاريخ:* ${patient.date}\n`;
@@ -200,19 +193,14 @@
         messageText += `------------------------------------\n`;
         messageText += `✨ *تمنياتنا لكم بالصحة والشفاء العاجل* ✨`;
 
-        // 2. ترميز النص ليتوافق مع الروابط
         const encodedText = encodeURIComponent(messageText);
 
-        // 3. تعديل الرقم للصيغة الدولية للعراق (استبدال الـ 0 الأول بـ 964)
         let phoneNumber = patient.phone.trim();
         if (phoneNumber.startsWith('0')) {
             phoneNumber = '964' + phoneNumber.substring(1);
         }
 
-        // 4. رابط الواتساب الرسمي المجاني
         const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedText}`;
-
-        // 5. فتح الواتساب في نافذة جديدة
         window.open(whatsappUrl, '_blank');
     }
 </script>
