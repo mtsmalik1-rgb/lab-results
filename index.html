@@ -42,11 +42,17 @@
             color: #64748b;
             margin: 0;
         }
-        .grid-2 {
+        /* تعديل التصميم ليتناسب مع 3 حقول فوق */
+        .grid-3 {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr; /* اسم المريض يأخذ مساحة أكبر */
             gap: 16px;
             margin-bottom: 25px;
+        }
+        @media (max-width: 600px) {
+            .grid-3 {
+                grid-template-columns: 1fr; /* على الشاشات الصغيرة تصبح فوق بعض */
+            }
         }
         .form-group {
             margin-bottom: 15px;
@@ -114,7 +120,9 @@
             cursor: pointer;
             margin-top: 30px;
         }
-        .btn-submit:hover { background-color: #0369a1; }
+        .btn-submit:hover {
+            background-color: #0369a1;
+        }
         .nav-links {
             display: flex;
             justify-content: center;
@@ -131,81 +139,93 @@
 </head>
 <body>
 
-    <div class="form-container">
-        <div class="header">
-            <h1>مختبر مركز الحياة لغسيل الكلى</h1>
-            <p>إدخال نتائج تحاليل المرضى الفورية 🧪</p>
-        </div>
-
-        <form id="patientForm">
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>اسم المريض الكامل</label>
-                    <input type="text" id="pName" placeholder="محمد علي حسن" required>
-                </div>
-                <div class="form-group">
-                    <label>الردهة</label>
-                    <select id="pWard" required>
-                        <option value="">اختر الردهة...</option>
-                        <option value="ردهة HIV">ردهة HIV</option>
-                        <option value="ردهة HCV">ردهة HCV</option>
-                        <option value="ردهة HBS">ردهة HBS</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="tests-section-title">التحاليل الطبية (أدخل النتائج المطلوبة فقط)</div>
-
-            <div class="tests-grid" id="testsGrid"></div>
-
-            <button type="submit" class="btn-submit">حفظ المريض وتوليد التقرير</button>
-        </form>
-
-        <div class="nav-links">
-            <a href="all-patients.html" style="color: #2563eb;">🗂️ عرض سجل كل المرضى المدخلين</a>
-        </div>
+<div class="form-container">
+    <div class="header">
+        <h1>مختبر مركز الحياة لغسيل الكلى</h1>
+        <p>إدخال نتائج تحاليل المرضى الفورية 🧪</p>
     </div>
 
-    <script>
-        const testList = ["ALT", "Alb", "Alp", "AST", "TSB", "PO4", "Glu", "CA", "UREA", "CREA", "TP", "Iron", "S.Fer", "PTH", "Vit.D3", "NA", "K", "Ca"];
-        const grid = document.getElementById('testsGrid');
+    <form id="patientForm">
+        <div class="grid-3">
+            <div class="form-group">
+                <label>اسم المريض الكامل</label>
+                <input type="text" id="pName" placeholder="محمد علي حسن" required>
+            </div>
+            
+            <div class="form-group">
+                <label>الردهة</label>
+                <select id="pWard" required>
+                    <option value="">اختر الردهة...</option>
+                    <option value="ردهة HIV">ردهة HIV</option>
+                    <option value="ردهة HCV">ردهة HCV</option>
+                    <option value="ردهة HBS">ردهة HBS</option>
+                </select>
+            </div>
 
+            <div class="form-group">
+                <label>رقم هاتف المريض (واتساب)</label>
+                <input type="tel" id="pPhone" placeholder="مثال: 07701234567" required>
+            </div>
+        </div>
+
+        <div class="tests-section-title">التحاليل الطبية (أدخل النتائج المطلوبة فقط)</div>
+        <div class="tests-grid" id="testsGrid"></div>
+
+        <button type="submit" class="btn-submit">حفظ المريض وتوليد التقرير</button>
+    </form>
+
+    <div class="nav-links">
+        <a href="all-patients.html" style="color: #2563eb;">🗂️ عرض سجل كل المرضى المدخلين</a>
+    </div>
+</div>
+
+<script>
+    const testList = ["ALT", "Alb", "Alp", "AST", "TSB", "PO4", "Glu", "CA", "UREA", "CREA", "TP", "Iron", "S.Fer", "PTH", "Vit.D3", "NA", "K", "Ca"];
+    const grid = document.getElementById('testsGrid');
+
+    testList.forEach(test => {
+        grid.innerHTML += `
+            <div class="test-input-box">
+                <label>${test}</label>
+                <input type="text" id="test_${test}" placeholder="-">
+            </div>
+        `;
+    });
+
+    document.getElementById('patientForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        let results = {};
         testList.forEach(test => {
-            grid.innerHTML += `
-                <div class="test-input-box">
-                    <label>${test}</label>
-                    <input type="text" id="test_${test}" placeholder="-">
-                </div>
-            `;
+            let val = document.getElementById(`test_${test}`).value.trim();
+            if(val !== "") results[test] = val;
         });
 
-        document.getElementById('patientForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            let results = {};
-            testList.forEach(test => {
-                let val = document.getElementById(`test_${test}`).value.trim();
-                if(val !== "") results[test] = val;
-            });
+        // 🟢 [المكان الثاني]: قراءة قيمة حقل رقم الهاتف
+        const patientPhoneValue = document.getElementById('pPhone').value.trim();
 
-            const patientRecord = {
-                id: Date.now(), // معرف فريد لكل مريض
-                name: document.getElementById('pName').value,
-                ward: document.getElementById('pWard').value,
-                date: new Date().toLocaleDateString('ar-EG'),
-                tests: results
-            };
+        // 🟢 [المكان الثالث]: حفظ الرقم داخل كائن المريض
+        const patientRecord = {
+            id: Date.now(), 
+            name: document.getElementById('pName').value,
+            ward: document.getElementById('pWard').value,
+            phone: patientPhoneValue, // تم إضافة الرقم هنا بنجاح
+            date: new Date().toLocaleDateString('ar-EG'),
+            tests: results
+        };
 
-            // جلب الأرشيف القديم أو إنشاء قائمة جديدة إن لم توجد
-            let allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
-            allPatients.push(patientRecord);
-            
-            // حفظ القائمة بالكامل وتحديد المريض الحالي للعرض
-            localStorage.setItem('allPatientsList', JSON.stringify(allPatients));
-            localStorage.setItem('luxuryPatientReport', JSON.stringify(patientRecord));
-            
-            window.location.href = 'results.html';
-        });
-    </script>
+        // جلب الأرشيف القديم أو إنشاء قائمة جديدة إن لم توجد
+        let allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+        allPatients.push(patientRecord);
+
+        // حفظ القائمة بالكامل وتحديد المريض الحالي للعرض
+        localStorage.setItem('allPatientsList', JSON.stringify(allPatients));
+        localStorage.setItem('luxuryPatientReport', JSON.stringify(patientRecord));
+
+        // الذهاب لصفحة النتائج
+        window.location.href = 'results.html';
+    });
+</script>
+
 </body>
 </html>
