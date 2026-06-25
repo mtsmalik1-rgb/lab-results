@@ -3,170 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سجل المرضى - مختبر مركز الحياة</title>
+    <title>مختبر مركز الحياة - سجل المرضى</title>
     <style>
-        :root {
-            --primary-color: #0284c7;
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-        }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .archive-container {
-            background: var(--card-bg);
-            max-width: 900px;
-            width: 100%;
-            padding: 35px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        h1 {
-            color: var(--primary-color);
-            margin-top: 0;
-            font-size: 24px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 15px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: right;
-            margin-top: 20px;
-        }
-        th {
-            background-color: #f8fafc;
-            color: #64748b;
-            padding: 14px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        td {
-            padding: 14px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .ward-badge {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: bold;
-            background: #fef3c7;
-            color: #d97706;
-        }
-        .btn-action {
-            padding: 6px 12px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            display: inline-block;
-            margin-left: 5px;
-        }
-        .btn-view { background: #e0f2fe; color: #0369a1; }
-        .btn-delete { background: #fee2e2; color: #ef4444; }
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #94a3b8;
-        }
-        .back-btn {
-            margin-top: 20px;
-            color: #64748b;
-            text-decoration: none;
-            font-size: 14px;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; padding: 30px; direction: rtl; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        h1 { color: #0284c7; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: center; }
+        th { background-color: #0284c7; color: white; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; display: inline-block; margin: 2px; }
+        .btn-view { background-color: #3b82f6; color: white; }
+        .btn-delete { background-color: #ef4444; color: white; }
+        /* زر الواتساب الأخضر داخل الجدول */
+        .btn-whatsapp { background-color: #25D366; color: white; border: none; }
+        .btn-whatsapp:hover { background-color: #1ebd58; }
+        .nav-links { display: flex; justify-content: space-between; margin-top: 20px; }
+        .nav-links a { color: #0284c7; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="archive-container">
-        <h1>🗂️ سجل ومطبوعات كل المرضى المدخلين</h1>
-        
-        <table id="patientsTable">
-            <thead>
-                <tr>
-                    <th>تاريخ الإدخال</th>
-                    <th>اسم المريض</th>
-                    <th>الردهة</th>
-                    <th>عدد التحاليل المدخلة</th>
-                    <th>إجراءات</th>
-                </tr>
-            </thead>
-            <tbody id="archiveBody">
-                </tbody>
-        </table>
-        
-        <div id="emptyView" class="no-data" style="display:none;">
-            📬 لا يوجد أي مرضى مسجلين حالياً في النظام.
-        </div>
+<div class="container">
+    <h1>🗂️ سجل ومطبوعات كل المرضى المدخلين</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>اسم المريض</th>
+                <th>الردهة</th>
+                <th>رقم الهاتف</th>
+                <th>التحاليل المدخلة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="patientsTableBody">
+            </tbody>
+    </table>
+
+    <div class="nav-links">
+        <a href="index.html">➕ إضافة مريض جديد</a>
     </div>
+</div>
 
-    <a href="index.html" class="back-btn">← العودة لصفحة إدخال مريض جديد</a>
+<script>
+    function loadPatients() {
+        const patients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+        const tbody = document.getElementById('patientsTableBody');
+        tbody.innerHTML = '';
 
-    <script>
-        function loadArchive() {
-            const allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
-            const tbody = document.getElementById('archiveBody');
-            const table = document.getElementById('patientsTable');
-            const emptyView = document.getElementById('emptyView');
-
-            tbody.innerHTML = "";
-
-            if (allPatients.length === 0) {
-                table.style.display = "none";
-                emptyView.style.display = "block";
-                return;
-            }
-
-            table.style.display = "table";
-            emptyView.style.display = "none";
-
-            // عرض المرضى من الأحدث إلى الأقدم
-            allPatients.reverse().forEach(patient => {
-                const totalTests = Object.keys(patient.tests).length;
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${patient.date}</td>
-                        <td><strong>${patient.name}</strong></td>
-                        <td><span class="ward-badge">${patient.ward}</span></td>
-                        <td>${totalTests} تحاليل</td>
-                        <td>
-                            <button class="btn-action btn-view" onclick="viewPatient(${patient.id})">📄 عرض وطباعة</button>
-                            <button class="btn-action btn-delete" onclick="deletePatient(${patient.id})">🗑️ حذف</button>
-                        </td>
-                    </tr>
-                `;
-            });
+        if(patients.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6">لا يوجد مرضى مسجلين حالياً.</td></tr>`;
+            return;
         }
 
-        function viewPatient(id) {
-            const allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
-            const patient = allPatients.find(p => p.id === id);
-            if (patient) {
-                localStorage.setItem('luxuryPatientReport', JSON.stringify(patient));
-                window.location.href = 'results.html';
-            }
+        patients.forEach((p, index) => {
+            const testNames = p.tests ? Object.keys(p.tests).join(', ') : 'لا يوجد';
+            const patientPhone = p.phone || 'غير مسجل';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${p.date}</td>
+                    <td style="font-weight: bold;">${p.name}</td>
+                    <td><span style="color: #0284c7; font-weight:bold;">${p.ward}</span></td>
+                    <td>${patientPhone}</td>
+                    <td style="font-size: 12px; color: #64748b;">${testNames}</td>
+                    <td>
+                        <button class="btn btn-view" onclick="viewPatient(${p.id})">👁️ عرض وطباعة</button>
+                        <button class="btn btn-whatsapp" onclick="sendWhatsAppDirect(${index})">🟢 واتساب</button>
+                        <button class="btn btn-delete" onclick="deletePatient(${p.id})">🗑️ حذف</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function viewPatient(id) {
+        const patients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+        const patient = patients.find(p => p.id === id);
+        if(patient) {
+            localStorage.setItem('luxuryPatientReport', JSON.stringify(patient));
+            window.location.href = 'results.html';
+        }
+    }
+
+    function deletePatient(id) {
+        if(confirm('هل أنت متأكد من حذف هذا المريض نهائياً؟')) {
+            let patients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+            patients = patients.filter(p => p.id !== id);
+            localStorage.setItem('allPatientsList', JSON.stringify(patients));
+            loadPatients();
+        }
+    }
+
+    // دالة إرسال الواتساب المباشرة من السجل
+    function sendWhatsAppDirect(index) {
+        const patients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
+        const p = patients[index];
+
+        if (!p || !p.phone || p.phone === 'غير مسجل') {
+            alert("هذا المريض لا يمتلك رقم هاتف مسجل أو تم إدخاله قبل التحديث!");
+            return;
         }
 
-        function deletePatient(id) {
-            if (confirm("هل أنت متأكد من حذف هذا المريض نهائياً من السجل؟")) {
-                let allPatients = JSON.parse(localStorage.getItem('allPatientsList')) || [];
-                allPatients = allPatients.filter(p => p.id !== id);
-                localStorage.setItem('allPatientsList', JSON.stringify(allPatients));
-                loadArchive();
+        let messageText = `🏥 *مختبر مركز الحياة لغسيل الكلى* 🏥\n\n`;
+        messageText += `👤 *المريض:* ${p.name}\n`;
+        messageText += `📅 *التاريخ:* ${p.date}\n`;
+        messageText += `🚪 *الردهة:* ${p.ward}\n`;
+        messageText += `------------------------------------\n`;
+        messageText += `🧪 *نتائج التحاليل الطبية:* \n\n`;
+
+        if (p.tests && Object.keys(p.tests).length > 0) {
+            for (const [testName, testValue] of Object.entries(p.tests)) {
+                messageText += `🔹 *${testName}:* ${testValue}\n`;
             }
+        } else {
+            messageText += `لا توجد تحاليل مسجلة.\n`;
         }
 
-        window.onload = loadArchive;
-    </script>
+        messageText += `------------------------------------\n`;
+        messageText += `✨ *تمنياتنا لكم بالصحة والشفاء العاجل* ✨`;
+
+        const encodedText = encodeURIComponent(messageText);
+        let phoneNumber = p.phone.trim();
+        if (phoneNumber.startsWith('0')) {
+            phoneNumber = '964' + phoneNumber.substring(1);
+        }
+
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedText}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    // تشغيل الدالة عند فتح الصفحة
+    window.onload = loadPatients;
+</script>
+
 </body>
 </html>
