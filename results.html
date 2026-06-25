@@ -267,35 +267,37 @@
 </div>
 
 <script>
-    // جلب البيانات مع وضع نظام حماية آمن لمنع الشاشة البيضاء تماماً
-    let patient = null;
+    // كود آمن تماماً لا يقبل الفشل ولا الشاشات البيضاء
+    let patientData = {
+        name: "مريض افتراضي (يرجى إدخال مريض جديد من الصفحة الرئيسية)",
+        date: new Date().toLocaleDateString('ar-EG'),
+        ward: "العامة",
+        phone: "غير محدد",
+        tests: { "UREA": "40", "CREA": "1.0", "K": "4.5" }
+    };
+
     try {
-        patient = JSON.parse(localStorage.getItem('luxuryPatientReport'));
+        const stored = localStorage.getItem('luxuryPatientReport');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.name) {
+                patientData = parsed;
+            }
+        }
     } catch(e) {
-        console.error(e);
+        console.log("No stored data found, using fallback pattern.");
     }
 
-    // إذا تم فتح الرابط مباشرة والبيانات فارغة، يتم عرض قالب تجريبي منظم
-    if (!patient) {
-        patient = {
-            name: "مريض تجريبي (يرجى إدخال مريض جديد)",
-            date: new Date().toLocaleDateString('ar-EG'),
-            ward: "ردهة افتراضية",
-            phone: "07700000000",
-            tests: { "UREA": "45 mg/dL", "CREA": "1.2 mg/dL", "K": "4.1 mEq/L" }
-        };
-    }
-
-    document.getElementById('outName').innerText = patient.name || "-";
-    document.getElementById('outDate').innerText = patient.date || "-";
-    document.getElementById('outWard').innerText = patient.ward || "-";
-    document.getElementById('outPhone').innerText = patient.phone || "غير محدد";
+    document.getElementById('outName').innerText = patientData.name;
+    document.getElementById('outDate').innerText = patientData.date;
+    document.getElementById('outWard').innerText = patientData.ward;
+    document.getElementById('outPhone').innerText = patientData.phone || "غير محدد";
 
     const tbody = document.getElementById('resultsTableBody');
     tbody.innerHTML = ''; 
     
-    if (patient.tests && Object.keys(patient.tests).length > 0) {
-        for (const [testName, testValue] of Object.entries(patient.tests)) {
+    if (patientData.tests && Object.keys(patientData.tests).length > 0) {
+        for (const [testName, testValue] of Object.entries(patientData.tests)) {
             tbody.innerHTML += `
                 <tr>
                     <td class="test-name-cell">${testName}</td>
@@ -304,24 +306,24 @@
             `;
         }
     } else {
-        tbody.innerHTML = `<tr><td colspan="2" style="color: #64748b; padding: 20px;">لم يتم تسجيل تحاليل.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="2" style="padding: 20px; color: #64748b;">لا توجد نتائج مسجلة.</td></tr>`;
     }
 
     function sendWhatsApp() {
-        if (!patient || !patient.phone || patient.phone === "07700000000") {
+        if (!patientData || !patientData.phone || patientData.phone === "غير محدد") {
             alert("لا يوجد رقم هاتف مسجل لإرسال التقرير!");
             return;
         }
 
         let messageText = `🏥 *مختبر مركز الحياة لغسيل الكلى* 🏥\n\n`;
-        messageText += `👤 *المريض:* ${patient.name}\n`;
-        messageText += `📅 *التاريخ:* ${patient.date}\n`;
-        messageText += `🚪 *الردهة:* ${patient.ward}\n`;
+        messageText += `👤 *المريض:* ${patientData.name}\n`;
+        messageText += `📅 *التاريخ:* ${patientData.date}\n`;
+        messageText += `🚪 *الردهة:* ${patientData.ward}\n`;
         messageText += `------------------------------------\n`;
         messageText += `🧪 *نتائج التحاليل الطبية:* \n\n`;
 
-        if (patient.tests && Object.keys(patient.tests).length > 0) {
-            for (const [testName, testValue] of Object.entries(patient.tests)) {
+        if (patientData.tests && Object.keys(patientData.tests).length > 0) {
+            for (const [testName, testValue] of Object.entries(patientData.tests)) {
                 messageText += `🔹 *${testName}:* ${testValue}\n`;
             }
         }
@@ -330,7 +332,7 @@
         messageText += `✨ *تمنياتنا لكم بالصحة والشفاء العاجل* ✨`;
 
         const encodedText = encodeURIComponent(messageText);
-        let phoneNumber = patient.phone.trim();
+        let phoneNumber = patientData.phone.trim();
         if (phoneNumber.startsWith('0')) {
             phoneNumber = '964' + phoneNumber.substring(1);
         }
