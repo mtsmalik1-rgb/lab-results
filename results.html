@@ -5,108 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مختبر مركز الحياة - نتيجة التحليل</title>
     <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #0284c7;
+            --accent-light: #e0f2fe;
+            --success: #22c55e;
+            --text-main: #334155;
+            --bg-global: #f1f5f9;
+        }
+
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-global);
             margin: 0;
-            padding: 40px 20px;
+            padding: 50px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            color: var(--text-main);
         }
+
         .report-card {
-            background: white;
-            max-width: 650px;
+            background: #ffffff;
+            max-width: 700px;
             width: 100%;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 45px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             border: 1px solid #e2e8f0;
+            position: relative;
         }
+
+        /* شريط جمالي علوي */
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+
         .report-header {
             text-align: center;
-            border-bottom: 3px double #0284c7;
+            margin-bottom: 35px;
             padding-bottom: 20px;
-            margin-bottom: 25px;
+            border-bottom: 2px dashed #cbd5e1;
         }
+
         .report-header h1 {
-            color: #0284c7;
-            margin: 0 0 5px 0;
-            font-size: 28px;
+            color: var(--primary);
+            margin: 0 0 8px 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
-        .patient-info {
+
+        .report-header p {
+            color: var(--accent);
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .patient-info-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-bottom: 35px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
             font-size: 15px;
         }
-        .info-item span {
-            font-weight: bold;
-            color: #334155;
+
+        .info-item .label {
+            color: #64748b;
+            font-weight: 500;
+            margin-left: 8px;
         }
+
+        .info-item .value {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .table-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            text-align: right;
         }
-        th, td {
-            border: 1px solid #cbd5e1;
-            padding: 12px;
-            text-align: center;
-        }
+
         th {
-            background-color: #0284c7;
-            color: white;
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
         tr:nth-child(even) {
             background-color: #f8fafc;
         }
+
+        .test-name {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .test-result {
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--accent-light);
+            padding: 4px 12px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
         .actions-area {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 35px;
+            width: 100%;
+            max-width: 700px;
         }
+
         .btn {
-            padding: 12px 25px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 15px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: 0.2s;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
         .btn-print {
-            background-color: #64748b;
+            background-color: var(--primary);
             color: white;
         }
+
         .btn-whatsapp {
-            background-color: #25D366;
+            background-color: var(--success);
             color: white;
         }
-        .btn-whatsapp:hover {
-            background-color: #1ebd58;
-        }
+
         .btn-back {
-            background-color: #e2e8f0;
-            color: #334155;
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #cbd5e1;
             text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
         }
+
         @media print {
             body { padding: 0; background: white; }
-            .report-card { box-shadow: none; border: none; padding: 0; }
+            .report-card { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+            .report-card::before { display: none; }
             .actions-area { display: none; }
+            .test-result { background: none; padding: 0; }
         }
     </style>
 </head>
@@ -115,32 +221,51 @@
 <div class="report-card">
     <div class="report-header">
         <h1>مختبر مركز الحياة لغسيل الكلى</h1>
-        <p>تقرير التحاليل المختبرية الفورية</p>
+        <p>BIOCHEMISTRY REPORT • تقرير التحاليل الطبية</p>
     </div>
 
-    <div class="patient-info">
-        <div class="info-item"><span>اسم المريض:</span> <span id="outName">-</span></div>
-        <div class="info-item"><span>التاريخ:</span> <span id="outDate">-</span></div>
-        <div class="info-item"><span>الردهة:</span> <span id="outWard">-</span></div>
-        <div class="info-item"><span>رقم الهاتف:</span> <span id="outPhone">-</span></div>
+    <div class="patient-info-box">
+        <div class="info-item">
+            <span class="label">اسم المريض:</span>
+            <span class="value" id="outName">-</span>
+        </div>
+        <div class="info-item">
+            <span class="label">التاريخ:</span>
+            <span class="value" id="outDate">-</span>
+        </div>
+        <div class="info-item">
+            <span class="label">الردهة:</span>
+            <span class="value" id="outWard">-</span>
+        </div>
+        <div class="info-item">
+            <span class="label">رقم الهاتف:</span>
+            <span class="value" id="outPhone">-</span>
+        </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>اسم التحليل (Test)</th>
-                <th>النتيجة (Result)</th>
-            </tr>
-        </thead>
-        <tbody id="resultsTableBody">
-        </tbody>
-    </table>
-
-    <div class="actions-area">
-        <button class="btn btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
-        <button class="btn btn-whatsapp" onclick="sendWhatsApp()">🟢 إرسال عبر الواتساب</button>
-        <a href="index.html" class="btn btn-back">➕ مريض جديد</a>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>اسم الفحص المخبري (Test Name)</th>
+                    <th>النتيجة (Result)</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTableBody">
+            </tbody>
+        </table>
     </div>
+
+    <div class="signatures">
+        <div>الفاحص المخبري المختص</div>
+        <div>طبيب المختبر المسؤول</div>
+    </div>
+</div>
+
+<div class="actions-area">
+    <button class="btn btn-print" onclick="window.print()">🖨️ طباعة التقرير الفاخر</button>
+    <button class="btn btn-whatsapp" onclick="sendWhatsApp()">🟢 إرسال عبر الواتساب</button>
+    <a href="index.html" class="btn btn-back">← إدخال مريض جديد</a>
 </div>
 
 <script>
@@ -157,13 +282,13 @@
             for (const [testName, testValue] of Object.entries(patient.tests)) {
                 tbody.innerHTML += `
                     <tr>
-                        <td style="font-weight: bold; color: #0284c7;">${testName}</td>
-                        <td style="font-weight: bold; color: #1e293b;">${testValue}</td>
+                        <td class="test-name">${testName}</td>
+                        <td><span class="test-result">${testValue}</span></td>
                     </tr>
                 `;
             }
         } else {
-            tbody.innerHTML = `<tr><td colspan="2">لم يتم إدخال أي نتائج تحاليل.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#94a3b8;">لم يتم إدخال أي نتائج تحاليل.</td></tr>`;
         }
     } else {
         alert("خطأ: لم يتم العثور على بيانات المريض!");
@@ -200,10 +325,4 @@
             phoneNumber = '964' + phoneNumber.substring(1);
         }
 
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedText}`;
-        window.open(whatsappUrl, '_blank');
-    }
-</script>
-
-</body>
-</html>
+        const whatsappUrl = `https://api.whatsapp
