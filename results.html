@@ -6,8 +6,8 @@
     <title>مختبر مركز الحياة - نتيجة التحليل</title>
     <style>
         :root {
-            --primary-color: #0c4a6e; /* أزرق طبي رسمي غامق */
-            --secondary-color: #0284c7; /* أزرق فاتح للخطوط */
+            --primary-color: #0c4a6e;
+            --secondary-color: #0284c7;
             --text-color: #000000;
             --bg-color: #ffffff;
         }
@@ -23,7 +23,6 @@
             color: var(--text-color);
         }
 
-        /* حاوية التقرير الرسمية مثل الورقة المطبوعة */
         .report-container {
             background-color: var(--bg-color);
             max-width: 800px;
@@ -32,10 +31,8 @@
             box-sizing: border-box;
             border: 2px solid var(--primary-color);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            position: relative;
         }
 
-        /* الهيدر الكلاسيكي العريض للفورما */
         .main-header {
             border: 3px solid var(--primary-color);
             padding: 15px;
@@ -56,10 +53,8 @@
             color: var(--secondary-color);
             font-size: 15px;
             font-weight: 600;
-            letter-spacing: 0.5px;
         }
 
-        /* جدول بيانات المريض المنظم (نظام الخلايا) */
         .patient-info-table {
             width: 100%;
             border-collapse: collapse;
@@ -84,7 +79,6 @@
             font-weight: 600;
         }
 
-        /* جدول النتائج الرئيسي المطابق للصورة */
         .results-table {
             width: 100%;
             border-collapse: collapse;
@@ -122,7 +116,6 @@
             font-size: 16px;
         }
 
-        /* قسم الملاحظات أسفل الجدول */
         .notes-section {
             border: 1px solid var(--primary-color);
             padding: 15px;
@@ -144,7 +137,6 @@
             line-height: 1.6;
         }
 
-        /* التواقيع الرسمية في نهاية الورقة */
         .signatures-row {
             display: flex;
             justify-content: space-between;
@@ -165,10 +157,108 @@
             border-top: 1px solid var(--primary-color);
         }
 
-        /* منطقة أزرار التحكم والواتساب */
         .buttons-container {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin-top:
-            
+            margin-top: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .btn-action {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-print-blue {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-whatsapp-green {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp-green:hover {
+            background-color: #1ebd58;
+        }
+
+        .btn-back-gray {
+            background-color: #e2e8f0;
+            color: #334155;
+            text-decoration: none;
+            line-height: 1.5;
+        }
+
+        @media print {
+            body { padding: 0; background: white; }
+            .report-container { border: none; box-shadow: none; padding: 0; max-width: 100%; }
+            .buttons-container { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="report-container">
+    <div class="main-header">
+        <h1>مختبر مركز الحياة لغسيل الكلى</h1>
+        <p>LABORATORY REPORT • تقرير الفحوصات المختبرية الفورية</p>
+    </div>
+
+    <table class="patient-info-table">
+        <tr>
+            <td class="label">اسم المريض</td>
+            <td class="value" id="outName">-</td>
+            <td class="label">التاريخ</td>
+            <td class="value" id="outDate">-</td>
+        </tr>
+        <tr>
+            <td class="label">الردهة</td>
+            <td class="value" id="outWard">-</td>
+            <td class="label">رقم الهاتف</td>
+            <td class="value" id="outPhone">-</td>
+        </tr>
+    </table>
+
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th style="width: 50%;">اسم الفحص المخبري (Test Name)</th>
+                <th style="width: 50%;">النتيجة النهائية (Result)</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTableBody">
+        </tbody>
+    </table>
+
+    <div class="notes-section">
+        <div class="notes-title">ملاحظات عامة (General Notes):</div>
+        <div class="notes-content">
+            تم إجراء هذه الفحوصات الفورية باستخدام أحدث الأجهزة المخبرية لمركز الحياة لغسيل الكلى. يرجى مراجعة الطبيب المعالج لمطابقة النتائج مع الحالة السريرية للمريض.
+        </div>
+    </div>
+
+    <div class="signatures-row">
+        <div class="signature-space">
+            <span>توقيع الفاحص المخبري المختص</span>
+            <div class="signature-line"></div>
+        </div>
+        <div class="signature-space">
+            <span>طبيب المختبر المسؤول</span>
+            <div class="signature-line"></div>
+        </div>
+    </div>
+</div>
+
+<div class="buttons-container">
+    <button class="btn-action btn-print-blue" onclick="window.print()">🖨️ طباعة التقرير</button>
